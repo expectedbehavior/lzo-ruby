@@ -1,0 +1,8 @@
+syntax: glob
+Debug*
+Release*
+*.ncb
+*.suo
+*.vcproj.*
+*.gem
+*.tar.*

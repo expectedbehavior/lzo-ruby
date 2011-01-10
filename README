@@ -1,0 +1,53 @@
+= LZO/Ruby
+
+Copyright (c) 2008 SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+
+== Description
+
+Ruby bindings for LZO.
+
+LZO is a portable lossless data compression library written in ANSI C.
+
+== Source Code
+
+https://bitbucket.org/winebarrel/lzo-ruby
+
+== Install
+
+gem install lzoruby
+
+== Example
+
+    require 'lzoruby'
+    require 'open-uri'
+    
+    source = open('http://rubyforge.org/projects/lzoruby/') {|f| f.read }
+    
+    puts "uncompress size: #{source.length}"
+    
+    # compress
+    comp_data = LZO.compress(source)
+    puts "compress size: #{comp_data.length}"
+    
+    # compress (level 9)
+    comp9_data = LZO.compress(source, 9)
+    puts "compress size (L9): #{comp9_data.length}"
+    
+    # decompress
+    decomp_data = LZO.decompress(comp_data)
+    puts "decompress size: #{decomp_data.length}"
+    puts "decomp_data success?: #{source == decomp_data}"
+    
+    # decompress (level 9)
+    decomp9_data = LZO.decompress(comp9_data)
+    puts "decompress size (L9): #{decomp9_data.length}"
+    puts "decomp_data success? (L9): #{source == decomp9_data}"
+
+=== LZO
+
+LZO/Ruby contains LZO.
+
+LZO is a portable lossless data compression library written in ANSI C. 
+
+* Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Markus F.X.J. Oberhumer
+* http://www.oberhumer.com/opensource/lzo/
