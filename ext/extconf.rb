@@ -1,5 +1,5 @@
 require 'mkmf'
 
-if have_header('lzo2')
+if have_library('lzo2')
   create_makefile('lzoruby')
 end
