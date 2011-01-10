@@ -167,6 +167,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)lib\i386-mswin32&quot;"
 			/>
 		</Configuration>
 	</Configurations>
