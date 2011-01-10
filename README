@@ -21,7 +21,7 @@ gem install lzoruby
     require 'lzoruby'
     require 'open-uri'
     
-    source = open('http://rubyforge.org/projects/lzoruby/') {|f| f.read }
+    source = open('http://www.yahoo.co.jp/') {|f| f.read }
     
     puts "uncompress size: #{source.length}"
     
