@@ -21,7 +21,7 @@ __declspec(dllexport) void Init_lzoruby(void);
 #define RSTRING_LEN(s) (RSTRING(s)->len)
 #endif
 
-#define VERSION "0.1.2"
+#define VERSION "0.1.3"
 
 static VALUE LZO;
 static VALUE LZO_Error;
