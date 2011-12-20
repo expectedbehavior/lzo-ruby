@@ -1,4 +1,4 @@
-/* 
+/*
  Ruby bindings for LZO.
  LZO is a portable lossless data compression library written in ANSI C.
 
@@ -44,16 +44,14 @@ static VALUE lzoruby_compress(int argc, const VALUE *argv, VALUE self) {
   in = RSTRING_PTR(v_in);
   in_len = RSTRING_LEN(v_in);
   out_len = in_len + in_len / 64 + 16 + 3;
-  out = xmalloc(5 + out_len);
+  out = xmalloc(out_len);
   new_len = out_len;
   wrkmem = xmalloc((level == 1) ? LZO1X_1_MEM_COMPRESS : LZO1X_999_MEM_COMPRESS);
 
   if (level == 1) {
-    out[0] = 0xf0;
-    err = lzo1x_1_compress(in, in_len, out + 5, &new_len, wrkmem);
+    err = lzo1x_1_compress(in, in_len, out, &new_len, wrkmem);
   } else {
-    out[0] = 0xf1;
-    err = lzo1x_999_compress(in, in_len, out + 5, &new_len, wrkmem);
+    err = lzo1x_999_compress(in, in_len, out, &new_len, wrkmem);
   }
 
   xfree(wrkmem);
@@ -63,11 +61,7 @@ static VALUE lzoruby_compress(int argc, const VALUE *argv, VALUE self) {
     rb_raise(LZO_Error, "Error %d while compressing data", err);
   }
 
-  out[1] = (unsigned char) ((in_len >> 24) & 0xff);
-  out[2] = (unsigned char) ((in_len >> 16) & 0xff);
-  out[3] = (unsigned char) ((in_len >>  8) & 0xff);
-  out[4] = (unsigned char) ((in_len >>  0) & 0xff);
-  v_out = rb_str_new(out, 5 + new_len);
+  v_out = rb_str_new(out, new_len);
   xfree(out);
 
   return v_out;
@@ -80,6 +74,7 @@ static VALUE lzoruby_decompress(VALUE self, VALUE v_in) {
   lzo_uint in_len;
   lzo_uint out_len;
   lzo_uint new_len;
+  unsigned int factor = 1, maxfactor = 16;
   VALUE v_out;
   int err;
 
@@ -88,23 +83,18 @@ static VALUE lzoruby_decompress(VALUE self, VALUE v_in) {
   in = RSTRING_PTR(v_in);
   in_len = RSTRING_LEN(v_in);
 
-  if (((int) in_len) < 5 + 3 || in[0] < 0xf0 || in[0] > 0xf1) {
+  if (((int) in_len) < 3) {
     rb_raise(LZO_Error, "Header error - invalid compressed data");
   }
 
-  in_len -= 5;
-  out_len = (in[1] << 24) | (in[2] << 16) | (in[3] << 8) | in[4];
+  do {
+    out_len = in_len * (1 << factor++);
+    new_len = out_len;
+    out = xrealloc(out, out_len);
+    err = lzo1x_decompress_safe(in, in_len, out, &new_len, NULL);
+  } while (err == LZO_E_OUTPUT_OVERRUN && factor < maxfactor);
 
-  if (((int) out_len) < 0 || in_len > out_len + out_len / 64 + 16 + 3) {
-    rb_raise(LZO_Error, "Header error - invalid compressed data");
-  }
-
-  out = xmalloc(out_len);
-  new_len = out_len;
-
-  err = lzo1x_decompress_safe(in + 5, in_len, out, &new_len, NULL);
-
-  if (err != LZO_E_OK || new_len != out_len) {
+  if (err != LZO_E_OK) {
     xfree(out);
     rb_raise(LZO_Error, "Compressed data violation %d", err);
   }
