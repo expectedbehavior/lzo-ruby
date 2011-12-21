@@ -70,7 +70,7 @@ static VALUE lzoruby_compress(int argc, const VALUE *argv, VALUE self) {
 /* */
 static VALUE lzoruby_decompress(VALUE self, VALUE v_in) {
   lzo_bytep in;
-  lzo_bytep out;
+  lzo_bytep out = NULL;
   lzo_uint in_len;
   lzo_uint out_len;
   lzo_uint new_len;

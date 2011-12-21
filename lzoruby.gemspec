@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name              = 'lzoruby'
-  spec.version           = '0.1.3.1'
+  spec.version           = '0.1.3.2'
   spec.summary           = 'Ruby bindings for LZO.'
   spec.files             = Dir.glob('ext/**/*.*') + %w(ext/extconf.rb README LICENSE.txt)
   spec.author            = 'winebarrel'
