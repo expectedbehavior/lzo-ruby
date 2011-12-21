@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name              = 'lzoruby'
-  spec.version           = '0.1.3'
+  spec.version           = '0.1.3.1'
   spec.platform          = 'mswin32'
   spec.summary           = 'Ruby bindings for liblzo.'
   spec.require_paths     = %w(lib/i386-mswin32)
